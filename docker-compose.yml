@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # 1. The MQTT Broker (The "Post Office")
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: smartgrid_broker
+    ports:
+      - "1883:1883"     # MQTT Port
+      - "9001:9001"     # Websocket Port (for browser clients)
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    # Create a default config so we don't need a password for now (Dev mode)
+    command: >
+      sh -c "echo 'listener 1883' > /mosquitto/config/mosquitto.conf &&
+             echo 'allow_anonymous true' >> /mosquitto/config/mosquitto.conf &&
+             /usr/sbin/mosquitto -c /mosquitto/config/mosquitto.conf"
+
+  # 2. The Database (The "Memory")
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    container_name: smartgrid_db
+    environment:
+      - POSTGRES_PASSWORD=password  # Simple password for dev
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=smartgrid
+    ports:
+      - "5432:5432"
+
+  # 3. The Dashboard (The "Visuals")
+  grafana:
+    image: grafana/grafana-oss
+    container_name: smartgrid_dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin  # Login: admin/admin
+    depends_on:
+      - timescaledb

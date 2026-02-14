@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Grid Dashboard</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { background-color: #f4f6f9; }
+        .card { box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: none; }
+        .metric-value { font-size: 2.5rem; font-weight: bold; }
+        .status-ok { color: #28a745; }
+        .status-warn { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-primary mb-4">
+    <div class="container">
+        <span class="navbar-brand mb-0 h1">⚡ Smart Grid Telemetry</span>
+        <span class="text-white" id="clock">--:--:--</span>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card p-3">
+                <h6 class="text-muted">Live Voltage</h6>
+                <div class="metric-value" id="voltage">-- V</div>
+                <small class="text-muted">Sensor: device-001</small>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-3">
+                <h6 class="text-muted">Current Load</h6>
+                <div class="metric-value" id="current">-- A</div>
+                <small class="text-muted">Amps</small>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-3">
+                <h6 class="text-muted">System Status</h6>
+                <div class="metric-value status-ok" id="status">Online</div>
+                <small class="text-muted">Last Update: <span id="last-update">--</span></small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card p-4">
+                <h5 class="mb-4">Voltage History (Real-time) 
+
+[Image of ChartJS line chart]
+</h5>
+                <canvas id="voltageChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Setup the Chart
+    const ctx = document.getElementById('voltageChart').getContext('2d');
+    const voltageChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [], // Time labels
+            datasets: [{
+                label: 'Voltage (V)',
+                data: [],
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4 // Smooth curves
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { display: false }, // Hide x-axis labels to reduce clutter
+                y: { beginAtZero: false, suggestedMin: 210, suggestedMax: 240 }
+            }
+        }
+    });
+
+    // 2. Function to Fetch Data from API
+    async function fetchData() {
+        try {
+            const response = await fetch('http://localhost:8080/api/telemetry/latest?sensorId=device-001');
+            const data = await response.json();
+
+            // Update Text Cards
+            document.getElementById('voltage').innerText = data.voltage.toFixed(2) + " V";
+            document.getElementById('current').innerText = data.current.toFixed(2) + " A";
+            document.getElementById('last-update').innerText = new Date(data.timestamp).toLocaleTimeString();
+
+            // Update Status Color (Simple Logic)
+            const statusElem = document.getElementById('status');
+            if (data.voltage > 240 || data.voltage < 200) {
+                statusElem.innerText = "Warning";
+                statusElem.className = "metric-value status-warn";
+            } else {
+                statusElem.innerText = "Stable";
+                statusElem.className = "metric-value status-ok";
+            }
+
+            // Update Chart
+            updateChart(data.timestamp, data.voltage);
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            document.getElementById('status').innerText = "Offline";
+            document.getElementById('status').className = "metric-value status-warn";
+        }
+    }
+
+    // 3. Helper to Push Data to Chart
+    function updateChart(timestamp, voltage) {
+        const timeLabel = new Date(timestamp).toLocaleTimeString();
+        
+        // Add new data
+        voltageChart.data.labels.push(timeLabel);
+        voltageChart.data.datasets[0].data.push(voltage);
+
+        // Keep only last 20 points
+        if (voltageChart.data.labels.length > 20) {
+            voltageChart.data.labels.shift();
+            voltageChart.data.datasets[0].data.shift();
+        }
+
+        voltageChart.update();
+    }
+
+    // 4. Run Loop
+    setInterval(fetchData, 2000); // Fetch every 2 seconds
+    fetchData(); // Initial call
+    
+    // Clock
+    setInterval(() => {
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+    }, 1000);
+
+</script>
+
+</body>
+</html>
