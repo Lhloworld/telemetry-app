@@ -6,15 +6,23 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Random;
 import java.util.UUID;
 
+import javax.net.ssl.SSLSocketFactory;
+
 public class SensorEmulator {
+    // private static final String brokerUrl =
+    //     "ssl://efc7bbcb67654acba4f617c6607ec470.s1.eu.hivemq.cloud:8883";
+
+    //     private static final String username = "AtulSingh";
+    //     private static final String password = "Atul1202";
+    private static String brokerUrl="tcp://localhost:1883";
 
     public static void main(String[] args) {
         // 1. Configuration
-        String brokerUrl = "tcp://127.0.0.1:1883";
         // String topic = "energy/sensor/device-001";
         // Let's use a topic that definitely matches "energy/sensor/+"
         String topic = "energy/sensor/device-001";
@@ -34,7 +42,9 @@ public class SensorEmulator {
             MqttConnectOptions options = new MqttConnectOptions();
             options.setCleanSession(true);
             options.setAutomaticReconnect(true);
-
+            //  options.setUserName(username);
+            // options.setPassword(password.toCharArray());
+           // options.setSocketFactory(SSLSocketFactory.getDefault());
             System.out.println("Attempting to connect...");
             client.connect(options);
             System.out.println("CONNECTED to Broker!");

@@ -5,6 +5,9 @@ import com.atul.telemetry_engine.model.TelemetryEntity;
 import com.atul.telemetry_engine.repository.TelemetryRepository;
 import com.atul.telemetry_engine.service.DspFilterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.net.ssl.SSLSocketFactory;
+
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +37,7 @@ public class MqttConfig {
     private DspFilterService dspFilterService;
     @Autowired
     private TelemetryRepository telemetryRepository;
-    @Value("${mqtt.broker.url}")
+    @Value("${mqtt.broker}")
     private String brokerUrl;
 
     @Value("${mqtt.client.id}")
@@ -43,12 +46,21 @@ public class MqttConfig {
     @Value("${mqtt.topic}")
     private String topic;
 
+    // @Value("${mqtt.username}")
+    // private String username;
+
+    // @Value("${mqtt.password}")
+    // private String password;
+
     @Bean
     public MqttPahoClientFactory mqttClientFactory() {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
         options.setServerURIs(new String[] { brokerUrl });
         options.setCleanSession(true);
+        // options.setUserName(username);
+        // options.setPassword(password.toCharArray());
+        // options.setSocketFactory(SSLSocketFactory.getDefault());
         options.setAutomaticReconnect(true);
         factory.setConnectionOptions(options);
         return factory;
