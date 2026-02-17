@@ -9,19 +9,22 @@ The repository also includes:
 
 This project demonstrates **backend engineering, distributed systems, containerization, and observability**.
 
+To be noted this is the backend part i have created a project sensor emulator to create a fake sensor and its docker file i have made a i mage and commands mentioned run 5 containers of that emulator making 5 sensors . The backend is build to manage 5000 devices hitting every sec.
+
 ---
 
 ## 🚀 Features
 
-- 📡 **MQTT-based ingestion** using Mosquitto
-- 🧠 **Spring Boot backend** for telemetry processing
-- 🗄 **TimescaleDB (PostgreSQL)** for time-series storage
+- 📡 **MQTT-based ingestion** using Mosquitto as it is used in IoT devices
+- 🧠 **Spring Boot backend** for telemetry processing and using available Spring Boot librarires for Mqtt communication.
+- 🗄 **TimescaleDB (PostgreSQL)** for time-series storage 
 - 📊 **Grafana dashboards** with multi-sensor filtering
 - 🔁 **Dockerized sensor emulator** for realistic testing
 - 🐳 Fully containerized with **Docker & Docker Compose**
 
 ---
 ## Overview of how the project works 
+Size of the video is big so to see the project download the video althought it shows how grafana is being utilized and the backend working. 
 ![alt text](src/main/resources/templates/working.mp4)
 ## 🏗 Architecture Overview
 
