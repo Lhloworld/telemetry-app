@@ -6,7 +6,10 @@ target/
 
 simulator/
 
-src/main/resources/application.properties
+
+
+application.properties
+
 ### STS ###
 .apt_generated
 .classpath
@@ -34,3 +37,4 @@ build/
 
 ### VS Code ###
 .vscode/
+
