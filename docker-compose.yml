@@ -39,3 +39,16 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin  # Login: admin/admin
     depends_on:
       - timescaledb
+
+  # 4. The Telemetry Engine application
+  telemetry-app:
+    build: .                      # builds using Dockerfile in project root
+    image: atulsingh17/telemetry-engine:latest
+    container_name: telemetry_engine
+    ports:
+      - "8080:8080"             # expose Spring Boot port
+    depends_on:
+      - timescaledb
+      - mosquitto
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod  # or any profile needed

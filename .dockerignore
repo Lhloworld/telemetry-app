@@ -1,0 +1,16 @@
+# ignore maven build artifacts
+target/
+#ignore the emulator it is seperated 
+simulator/
+
+#hide the application.properties file
+
+# ignore IDE files
+.idea/
+.vscode/
+
+# logs
+*.log
+
+# other
+.git

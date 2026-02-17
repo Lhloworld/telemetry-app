@@ -7,7 +7,8 @@ target/
 simulator/
 
 
-
+Dockerfile
+docker-readme.md
 application.properties
 
 ### STS ###
