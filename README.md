@@ -1,7 +1,7 @@
 # Telemetry Engine ⚡📊
 
 A lightweight **Spring Boot telemetry ingestion system** that consumes real-time sensor data over **MQTT**, processes it, and stores it in **TimescaleDB** for visualization and analysis using **Grafana**.
-
+Note- The Sensor part is present in another repository - https://github.com/atulsingh1704/sensor-emulator
 The repository also includes:
 - An **Eclipse Mosquitto** broker
 - A **sensor emulator** for local testing and load simulation
@@ -25,7 +25,7 @@ To be noted this is the backend part i have created a project sensor emulator to
 ---
 ## Overview of how the project works 
 Size of the video is big so to see the project download the video althought it shows how grafana is being utilized and the backend working. 
-![alt text](src/main/resources/templates/working.mp4)
+
 ## 🏗 Architecture Overview
 
 ![alt text](src/main/resources/templates/architect.jpg)
